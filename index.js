@@ -1,8 +1,14 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
-import { boot, getSessionsForDay } from './lib/api.js';
+import { boot, getSessionsForDay, WAVE_CODES } from './lib/api.js';
 import { getToday, nextDay, printDate } from './lib/date.js';
+
+const DEFAULT_WAVE = 'Intermediate Right';
+const MODES = {
+  WEEK: 'Sessions this week',
+  NEXT: 'Next available session',
+};
 
 const printDay = async (date) => {
   console.log(`\n${printDate(date)}`);
@@ -12,11 +18,6 @@ const printDay = async (date) => {
     console.log(highlight(`${session.name}: ${session.availableSeats}`));
   });
   return sessions;
-};
-
-const MODES = {
-  WEEK: 'Sessions this week',
-  NEXT: 'Next available session',
 };
 
 const printDays = async (numDays = 7) => {
@@ -47,9 +48,13 @@ const findAnAvailableSession = async (maxDays = 14) => {
 };
 
 const run = async () => {
-  await boot();
-
-  const prompt = await inquirer.prompt([
+  const { wave, mode } = await inquirer.prompt([
+    {
+      name: 'wave',
+      type: 'list',
+      choices: Object.keys(WAVE_CODES),
+      default: DEFAULT_WAVE,
+    },
     {
       name: 'mode',
       type: 'list',
@@ -57,7 +62,9 @@ const run = async () => {
     },
   ]);
 
-  switch (prompt.mode) {
+  await boot(wave);
+
+  switch (mode) {
     case MODES.WEEK:
       return printDays(7);
     case MODES.NEXT:

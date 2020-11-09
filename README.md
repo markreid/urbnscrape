@@ -1,20 +1,15 @@
 # URBNSCRAPE
 
-
 CLI tool for finding available spots at my local wave pool.
-
 
 ## Why?
 
 The wave pool is really popular, so most of the time it's booked out well in advance. The UI for booking a session lets you choose a date, but then you can only iterate one day at a time forward or backward to try and find a free session. Most of the time I just want to be able to quickly find the next available session.
 
-
 This tool has two modes:
 
 - Iterate days until you find an available session
 - Display availability for all sessions for X days
-
-
 
 ## Usage
 
@@ -23,9 +18,6 @@ This tool has two modes:
 npm i
 npm start
 ```
-
-
-
 
 ## Note
 
