@@ -28,7 +28,7 @@ const printDays = async (numDays = 7) => {
   }
 };
 
-const findAnAvailableSession = async (maxDays = 14) => {
+const findAnAvailableSession = async (maxDays = 28) => {
   let date = getToday();
   while (maxDays--) {
     console.log(`checking ${printDate(date)}...`);
