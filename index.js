@@ -13,7 +13,7 @@ const MODES = {
 const printDay = async (date) => {
   console.log(`\n${printDate(date)}`);
   const sessions = await getSessionsForDay(date);
-  sessions.forEach((session) => {
+  (sessions || []).forEach((session) => {
     const highlight = session.availableSeats ? chalk.green : chalk;
     console.log(highlight(`${session.name}: ${session.availableSeats}`));
   });
@@ -33,7 +33,9 @@ const findAnAvailableSession = async (maxDays = 14) => {
   while (maxDays--) {
     console.log(`checking ${printDate(date)}...`);
     const sessions = await getSessionsForDay(date);
-    const available = sessions.find((session) => session.availableSeats);
+    const available = (sessions || []).find(
+      (session) => session.availableSeats
+    );
     if (available) {
       console.log(
         chalk.green(`${available.name}: ${available.availableSeats} available`)
@@ -62,7 +64,13 @@ const run = async () => {
     },
   ]);
 
-  await boot(wave);
+  try {
+    await boot(wave);
+  } catch (error) {
+    console.log('error in boot()');
+    console.error(error);
+    return false;
+  }
 
   switch (mode) {
     case MODES.WEEK:
