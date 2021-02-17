@@ -7,7 +7,7 @@ import { getToday, nextDay, printDate } from './lib/date.js';
 const DEFAULT_WAVE = 'Intermediate Right';
 const MODES = {
   WEEK: 'Sessions this week',
-  NEXT: 'Next available session',
+  NEXT: 'Next available sessions',
 };
 
 const printDay = async (date) => {
@@ -28,21 +28,28 @@ const printDays = async (numDays = 7) => {
   }
 };
 
-const findAnAvailableSession = async (maxDays = 28) => {
+const findAnAvailableSession = async (maxDays = 28, maxResults = 3) => {
   let date = getToday();
+  let found = 0;
   while (maxDays--) {
     console.log(`checking ${printDate(date)}...`);
     const sessions = await getSessionsForDay(date);
-    const available = sessions.find((session) => session.availableSeats);
-    if (available) {
-      console.log(
-        chalk.green(`${available.name}: ${available.availableSeats} available`)
-      );
-      return true;
+    const availableSessions = sessions
+      .filter((session) => session.availableSeats)
+      .slice(0, maxResults - found);
+
+    if (availableSessions.length) {
+      found += availableSessions.length;
+      availableSessions.forEach((session) => {
+        console.log(
+          chalk.green(`${session.name}: ${session.availableSeats} available`)
+        );
+      });
+      if (found >= maxResults) return true;
     } else {
       console.log(`no sessions available for ${printDate(date)}`);
-      date = nextDay(date);
     }
+    date = nextDay(date);
   }
   return false;
 };
